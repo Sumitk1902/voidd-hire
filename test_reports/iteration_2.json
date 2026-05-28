@@ -1,0 +1,50 @@
+{
+  "summary": "Frontend retest after script load-order fix. Iteration 1's critical script-order bug is RESOLVED — main.js now loads before admin.js / forms.js in rendered HTML (lines 276 vs 278). All 12 frontend flows pass EXCEPT PDF download for invoices that have no candidate (a NEW backend bug surfaced by the new-invoice modal which does not capture a candidate). Specifically: auth-guard redirect, login, KPI population, all 6 admin tabs, candidate drawer + status save, new invoice creation, mark-paid, logout, and all three public forms (candidate/company/contact) submit via fetch and show .form-note.is-success. The only failure is /api/admin/invoices/<id>/pdf returning 500 for the freshly-created invoice (candidate_name is NULL in DB → reportlab AttributeError).",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "GET /api/admin/invoices/<id>/pdf",
+        "issue": "Returns 500 (text/html) when the invoice row has candidate_name=NULL. Traceback: File /app/backend/invoice.py line 102 → reportlab/platypus/paragraph.py → AttributeError: 'NoneType' object has no attribute 'split'. Root cause: `invoice.get('candidate_name', '—')` returns None (not '—') because the key exists but its value is NULL. Same risk applies to any other field passed to Paragraph(...) without a None-guard. Fix: use `invoice.get('candidate_name') or '—'` (and same for company_name, role, etc.). PDF works fine on the iteration-1 seeded invoice where candidate_name is set.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Invoice creation modal",
+        "issue": "The new-invoice modal only captures company + placement_fee + GST. It does NOT collect candidate_name (no candidate selector / placement reference). The created row in invoices table therefore has candidate_name=NULL in the DB, which in turn triggers the PDF 500 above. Either (a) require selecting a placement / candidate in the modal, or (b) auto-fill from the company's most recent placement, or (c) keep optional but fix the PDF None-guard. Test spec did not require entering a candidate, so the backend fix is the more conservative path.",
+        "affected_selectors": ["data-testid=new-invoice-btn", "data-testid=admin-modal", "data-testid=invoice-download-<id>"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix /app/backend/invoice.py None-handling: replace `invoice.get('candidate_name', '—')` with `invoice.get('candidate_name') or '—'` (and audit every other Paragraph(...) call that pulls from invoice dict — company_name, role, hr_name etc. — to use the `or '—'` pattern). After the fix, PDF download for the newly-created invoice should return application/pdf.",
+    "Optional UX: extend the new-invoice modal to optionally pick a placement/candidate so candidate_name is populated at creation time."
+  ],
+  "critical_code_review_comments": [
+    "Iteration-1 script-block placement fix is verified — main.js (line 276) precedes admin.js (line 278) in /admin HTML; no PageError in console.",
+    "invoice.py None-safety bug is a textbook get(key, default) misuse: default is returned only for MISSING key, not for null value. Audit every similar .get(..., '—') in the codebase.",
+    "Mark-paid endpoint behaves idempotently (clicking on an already-paid invoice didn't error), but the UI still shows the 'Mark paid' button on already-paid rows in one case — verify status check on button render.",
+    "Public forms POST via JSON fetch correctly and reset; no native HTML submit fallback observed — iteration-1 regression is fixed."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "Not re-tested per main agent instruction; PDF endpoint now has 1 known regression (HIGH).",
+    "frontend": "92% (11/12 spec items pass; PDF download fails due to backend 500, not a FE bug)"
+  },
+  "test_credentials": "Admin: admin@voiddhire.com / Voidd@Admin2026 (from /app/memory/test_credentials.md — verified working).",
+  "seed_data_creation": "Iteration-1 TEST_ seed data is intact. This iteration added: 1 new invoice (id ffda86e0-8cf3-4f64-a12d-2a67e97d806c, candidate_name=NULL — keep for repro of the PDF bug), 1 candidate status changed to 'contacted', 1 new TEST_ candidate (test_front_cand@example.com), 1 new TEST_ company (test_front_comp@example.com), 1 new TEST_ contact message (test_front_contact@example.com). All in /app/backend/voidd_hire.db.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "If main agent fixes invoice.py None-handling, retest only the PDF flow: login as admin → Invoices tab → click 'PDF' on the invoice row with candidate_name=NULL (id ffda86e0-...) → confirm response Content-Type is application/pdf. All other admin + public-form flows are verified green in this iteration and don't need re-running unless main agent touches templates / main.js / admin.js / forms.js again.",
+  "rca of the issue": "Bug: PDF generation crashes with AttributeError for invoices whose candidate_name column is NULL. Reproduction: login as admin → Invoices → '+ Generate invoice' → pick company → enter placement_fee=100000 → submit. New row appears with candidate_name=NULL. Click PDF on that row → /api/admin/invoices/<id>/pdf returns 500 (text/html). Root cause: /app/backend/invoice.py line 102 calls `Paragraph(invoice.get('candidate_name', '—'), body)`. dict.get(key, default) returns the default ONLY when key is MISSING — when key exists with value None, it returns None. reportlab.Paragraph then calls .split() on None → AttributeError. Mitigation: change to `Paragraph(invoice.get('candidate_name') or '—', body)` and audit all sibling fields in invoice.py for the same anti-pattern. Optional FE mitigation: make the new-invoice modal require a placement/candidate selection so candidate_name is never NULL at insert time."
+}

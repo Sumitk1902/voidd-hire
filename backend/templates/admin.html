@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Admin · VOIDD Hire{% endblock %}
+{% block content %}
+<div class="admin-shell" data-testid="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <img src="/static/images/logo.jpeg" alt="VOIDD Hire" />
+      <span>VOIDD<span class="brand-name-accent">HIRE</span></span>
+    </div>
+    <nav class="admin-nav">
+      <button class="admin-nav-btn is-active" data-view="overview" data-testid="admin-nav-overview">
+        <span class="dot"></span>Overview
+      </button>
+      <button class="admin-nav-btn" data-view="candidates" data-testid="admin-nav-candidates">
+        <span class="dot"></span>Candidates
+      </button>
+      <button class="admin-nav-btn" data-view="companies" data-testid="admin-nav-companies">
+        <span class="dot"></span>Companies
+      </button>
+      <button class="admin-nav-btn" data-view="placements" data-testid="admin-nav-placements">
+        <span class="dot"></span>Placements
+      </button>
+      <button class="admin-nav-btn" data-view="invoices" data-testid="admin-nav-invoices">
+        <span class="dot"></span>Invoices
+      </button>
+      <button class="admin-nav-btn" data-view="messages" data-testid="admin-nav-messages">
+        <span class="dot"></span>Messages
+      </button>
+    </nav>
+    <div class="admin-footer">
+      <span class="admin-user" data-testid="admin-user-label">—</span>
+      <button id="logout-btn" class="btn btn-ghost btn-sm" data-testid="admin-logout-btn">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div>
+        <h1 id="view-title" class="admin-title">Overview</h1>
+        <p id="view-subtitle" class="muted">Live snapshot of the operations desk.</p>
+      </div>
+      <div class="admin-quick">
+        <button class="btn btn-ghost btn-sm" id="refresh-btn" data-testid="admin-refresh-btn">Refresh</button>
+      </div>
+    </header>
+
+    <!-- Overview -->
+    <section class="admin-view is-active" data-view="overview" data-testid="view-overview">
+      <div class="kpi-grid">
+        <article class="kpi"><span class="kpi-label">Candidates</span><strong id="kpi-candidates">—</strong><span class="kpi-trend">in pipeline</span></article>
+        <article class="kpi"><span class="kpi-label">Companies</span><strong id="kpi-companies">—</strong><span class="kpi-trend">active briefs</span></article>
+        <article class="kpi"><span class="kpi-label">Shortlisted</span><strong id="kpi-shortlisted">—</strong><span class="kpi-trend">ready to interview</span></article>
+        <article class="kpi"><span class="kpi-label">Placements</span><strong id="kpi-placements">—</strong><span class="kpi-trend">closed roles</span></article>
+        <article class="kpi kpi-accent"><span class="kpi-label">Revenue · paid</span><strong id="kpi-revenue">—</strong><span class="kpi-trend">collected</span></article>
+        <article class="kpi"><span class="kpi-label">Revenue · pending</span><strong id="kpi-revenue-pending">—</strong><span class="kpi-trend">outstanding</span></article>
+      </div>
+
+      <div class="panel-row">
+        <div class="panel">
+          <header><h3>Submission trend</h3><span class="muted">Candidates / day</span></header>
+          <div class="chart" id="trend-chart"></div>
+        </div>
+        <div class="panel">
+          <header><h3>Pipeline</h3><span class="muted">Candidates by status</span></header>
+          <div id="status-bars" class="status-bars"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Candidates -->
+    <section class="admin-view" data-view="candidates" data-testid="view-candidates">
+      <div class="toolbar">
+        <input id="cand-search" type="search" placeholder="Search by name, email, skills, role" class="search-input" data-testid="candidates-search" />
+        <select id="cand-status-filter" class="search-select" data-testid="candidates-status-filter">
+          <option value="">All statuses</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="shortlisted">Shortlisted</option>
+          <option value="placed">Placed</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <label class="checkbox toolbar-check">
+          <input type="checkbox" id="cand-shortlist-filter" data-testid="candidates-shortlist-filter" />
+          <span>Only shortlisted</span>
+        </label>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table" data-testid="candidates-table">
+          <thead><tr><th>Name</th><th>Role</th><th>Experience</th><th>Location</th><th>Salary</th><th>Status</th><th></th></tr></thead>
+          <tbody id="cand-tbody"></tbody>
+        </table>
+        <div id="cand-empty" class="empty hidden">No candidates yet.</div>
+      </div>
+    </section>
+
+    <!-- Companies -->
+    <section class="admin-view" data-view="companies" data-testid="view-companies">
+      <div class="toolbar">
+        <input id="comp-search" type="search" placeholder="Search by company, role, email" class="search-input" data-testid="companies-search" />
+        <select id="comp-status-filter" class="search-select" data-testid="companies-status-filter">
+          <option value="">All statuses</option>
+          <option value="new">New</option>
+          <option value="in_progress">In progress</option>
+          <option value="closed">Closed</option>
+          <option value="dropped">Dropped</option>
+        </select>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table" data-testid="companies-table">
+          <thead><tr><th>Company</th><th>Role</th><th>HR</th><th>Budget</th><th>Urgency</th><th>Status</th><th></th></tr></thead>
+          <tbody id="comp-tbody"></tbody>
+        </table>
+        <div id="comp-empty" class="empty hidden">No company inquiries yet.</div>
+      </div>
+    </section>
+
+    <!-- Placements -->
+    <section class="admin-view" data-view="placements" data-testid="view-placements">
+      <div class="toolbar">
+        <button class="btn btn-primary btn-sm" id="new-placement-btn" data-testid="new-placement-btn">+ Record placement</button>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table" data-testid="placements-table">
+          <thead><tr><th>Candidate</th><th>Company</th><th>Role</th><th>Fee</th><th>Placed</th></tr></thead>
+          <tbody id="placements-tbody"></tbody>
+        </table>
+        <div id="placements-empty" class="empty hidden">No placements recorded yet.</div>
+      </div>
+    </section>
+
+    <!-- Invoices -->
+    <section class="admin-view" data-view="invoices" data-testid="view-invoices">
+      <div class="toolbar">
+        <button class="btn btn-primary btn-sm" id="new-invoice-btn" data-testid="new-invoice-btn">+ Generate invoice</button>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table" data-testid="invoices-table">
+          <thead><tr><th>Invoice #</th><th>Company</th><th>Candidate</th><th>Total</th><th>Status</th><th>Created</th><th></th></tr></thead>
+          <tbody id="invoices-tbody"></tbody>
+        </table>
+        <div id="invoices-empty" class="empty hidden">No invoices generated yet.</div>
+      </div>
+    </section>
+
+    <!-- Messages -->
+    <section class="admin-view" data-view="messages" data-testid="view-messages">
+      <div class="data-table-wrap">
+        <table class="data-table" data-testid="messages-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Received</th></tr></thead>
+          <tbody id="messages-tbody"></tbody>
+        </table>
+        <div id="messages-empty" class="empty hidden">No contact messages yet.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Drawer -->
+<div id="drawer" class="drawer" aria-hidden="true" data-testid="admin-drawer">
+  <div class="drawer-backdrop" data-close></div>
+  <aside class="drawer-panel">
+    <header class="drawer-head">
+      <div>
+        <span id="drawer-eyebrow" class="eyebrow">—</span>
+        <h2 id="drawer-title">—</h2>
+      </div>
+      <button class="drawer-close" data-close aria-label="Close" data-testid="drawer-close">×</button>
+    </header>
+    <div id="drawer-body" class="drawer-body"></div>
+  </aside>
+</div>
+
+<!-- Modal (placements / invoices) -->
+<div id="modal" class="modal" aria-hidden="true" data-testid="admin-modal">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel">
+    <header class="modal-head">
+      <h2 id="modal-title">—</h2>
+      <button class="drawer-close" data-close aria-label="Close" data-testid="modal-close">×</button>
+    </header>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin.js?v=8" defer></script>
+{% endblock %}

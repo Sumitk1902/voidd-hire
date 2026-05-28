@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}VOIDD Hire — Hiring that moves businesses forward{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow" data-testid="hero-eyebrow">Recruitment operations · since 2024</span>
+      <h1 class="display" data-testid="hero-headline">
+        Hiring that moves<br>
+        businesses <em>forward.</em>
+      </h1>
+      <p class="lede" data-testid="hero-subheadline">
+        VOIDD connects modern companies with carefully shortlisted talent.
+        We run the full operational layer — sourcing, vetting, scheduling —
+        so your team only meets candidates worth meeting.
+      </p>
+      <div class="hero-cta">
+        <a href="/company" class="btn btn-primary btn-lg" data-testid="hero-hire-btn">
+          Hire talent
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/candidate" class="btn btn-secondary btn-lg" data-testid="hero-submit-btn">
+          Submit your profile
+        </a>
+      </div>
+      <dl class="hero-stats" data-testid="hero-stats">
+        <div><dt>14 days</dt><dd>Median shortlist time</dd></div>
+        <div><dt>3 of 5</dt><dd>Candidates clear final round</dd></div>
+        <div><dt>120+</dt><dd>Roles closed across teams</dd></div>
+      </dl>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-visual-frame">
+        <div class="hv-grid"></div>
+        <article class="hv-card hv-card-1">
+          <header><span class="hv-dot"></span><span>Frontend Engineer</span></header>
+          <p>Bengaluru · 4 yrs · ₹28L</p>
+          <footer><span class="hv-badge">Shortlisted</span></footer>
+        </article>
+        <article class="hv-card hv-card-2">
+          <header><span class="hv-dot is-amber"></span><span>Product Designer</span></header>
+          <p>Remote · 6 yrs · ₹34L</p>
+          <footer><span class="hv-badge is-amber">Interviewing</span></footer>
+        </article>
+        <article class="hv-card hv-card-3">
+          <header><span class="hv-dot is-green"></span><span>Senior Backend</span></header>
+          <p>Mumbai · 8 yrs · ₹52L</p>
+          <footer><span class="hv-badge is-green">Offer extended</span></footer>
+        </article>
+        <div class="hv-thread"></div>
+        <div class="hv-person hv-person-1"><div></div></div>
+        <div class="hv-person hv-person-2"><div></div></div>
+        <div class="hv-person hv-person-3"><div></div></div>
+        <div class="hv-stamp">VH · Vetted</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="logos" aria-label="Trusted by">
+  <div class="container">
+    <p class="logos-label">Trusted by teams building in India and beyond</p>
+    <div class="logos-row">
+      <span>Northwind</span><span>Hadron Labs</span><span>Lumen &amp; Co.</span>
+      <span>Tigerlily</span><span>OrbitalWare</span><span>Forge Studio</span>
+    </div>
+  </div>
+</section>
+
+<section class="section how-it-works">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2 class="h-display">Operational hiring. No job-board theatre.</h2>
+      <p class="lede-muted">We don't dump a thousand resumes on your desk. We run a tight, accountable process from brief to placement.</p>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-no">01</span>
+        <h3>Brief</h3>
+        <p>You share the role, urgency and budget. We translate it into a precise candidate scorecard.</p>
+      </li>
+      <li class="step">
+        <span class="step-no">02</span>
+        <h3>Source &amp; vet</h3>
+        <p>Our team sources, screens and runs structured interviews. Only candidates who score &gt; 80% move forward.</p>
+      </li>
+      <li class="step">
+        <span class="step-no">03</span>
+        <h3>Shortlist</h3>
+        <p>You receive 3–5 prepared candidates with notes, references and salary alignment.</p>
+      </li>
+      <li class="step">
+        <span class="step-no">04</span>
+        <h3>Close</h3>
+        <p>We coordinate interviews, references and offer negotiation until your hire signs.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section split">
+  <div class="container split-grid">
+    <article class="split-card" data-testid="split-talent">
+      <span class="eyebrow">For talent</span>
+      <h2>Roles that match where you're actually going.</h2>
+      <p>Submit your profile once. We'll only reach out when there's a role worth your time — with prep, salary clarity and a real shot at the offer.</p>
+      <ul class="ticks">
+        <li>Confidential by default</li>
+        <li>Honest salary conversations</li>
+        <li>Interview prep included</li>
+      </ul>
+      <a href="/candidate" class="btn btn-primary">Submit your profile<span class="btn-arrow">→</span></a>
+    </article>
+    <article class="split-card split-card-alt" data-testid="split-companies">
+      <span class="eyebrow">For companies</span>
+      <h2>Hire like a top operator.</h2>
+      <p>From the first brief to the signed offer, we run the operational layer of your hiring — so your team can focus on building.</p>
+      <ul class="ticks">
+        <li>Scorecard-led shortlists</li>
+        <li>Interview ops &amp; scheduling</li>
+        <li>Offer &amp; reference management</li>
+      </ul>
+      <a href="/company" class="btn btn-secondary">Start a hiring brief<span class="btn-arrow">→</span></a>
+    </article>
+  </div>
+</section>
+
+<section class="section quote">
+  <div class="container">
+    <figure>
+      <blockquote>
+        "VOIDD ran our engineering hiring for a quarter. The shortlist quality was the highest we've seen — every candidate had been properly vetted. We closed four hires in six weeks."
+      </blockquote>
+      <figcaption>
+        <strong>Anika R.</strong>
+        <span>VP Engineering · Fintech (Series B)</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section cta-band">
+  <div class="container cta-band-inner">
+    <div>
+      <h2 class="h-display">Ready when your next hire is.</h2>
+      <p>Tell us about the role or your career move. We'll respond within one working day.</p>
+    </div>
+    <div class="cta-band-actions">
+      <a href="/company" class="btn btn-primary btn-lg">Hire talent</a>
+      <a href="/candidate" class="btn btn-ghost btn-lg">Submit profile</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

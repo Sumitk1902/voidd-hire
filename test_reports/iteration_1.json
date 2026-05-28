@@ -1,0 +1,73 @@
+{
+  "summary": "First end-to-end test of VOIDD Hire. Backend (pytest, 30 tests) is fully GREEN — health, JWT auth, public submissions (candidate/company/contact), Emergent Object Storage resume upload+download, full admin CRUD (candidates, companies, notes, analytics, placements, invoices+PDF, contact messages) and auth-guard on all admin routes all pass. Frontend public pages all render. CRITICAL UI bug: admin dashboard and public form JS crash on load because admin.js / forms.js read window.VH.api before main.js (which defines it) has executed — script load order is wrong due to template block placement. This breaks: /admin auth-guard redirect, KPI/analytics population, all admin tab data loading, candidate detail drawer, invoice creation/PDF/mark-paid, logout button, AND public candidate/company/contact JS submission (they fall back to native form POSTs that fail). Login flow itself works because login.js does not use window.VH.api.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "admin.js / forms.js (all admin + public form pages)",
+        "issue": "Uncaught PageError on load: 'Cannot read properties of undefined (reading \\'api\\')'. admin.js line 3 (`const api = window.VH.api;`) and forms.js line 3 (same line) execute BEFORE main.js because in admin.html / candidate.html / company.html / contact.html the page script tag is placed inside `{% block content %}` (rendered inside <main>) while base.html loads main.js further down the body (line 94) inside `{% block scripts %}` slot. With `defer`, scripts run in document order, so the page script runs first and aborts. Net effect: ENTIRE admin dashboard does nothing — no auth-guard redirect from /admin, KPIs stay '—', every tab is empty, drawers/modals/PDF/mark-paid/logout do not work. Public candidate/company/contact JS also never attach handlers; submitting falls through to native HTML form action which is not /api/* JSON.",
+        "selector": "/static/js/admin.js, /static/js/forms.js (root cause is template script placement)",
+        "priority": "CRITICAL"
+      },
+      {
+        "component": "/admin client-side auth guard",
+        "issue": "Visiting /admin without a token does NOT redirect to /login — the admin shell renders. Caused by the same admin.js crash before `if (!token) window.location.href = '/login'` executes.",
+        "selector": "data-testid=admin-shell",
+        "priority": "HIGH"
+      },
+      {
+        "component": "Sign-out button",
+        "issue": "Clicking [data-testid=admin-logout-btn] does nothing; localStorage.vh_token is not cleared and URL does not change (same root cause as above).",
+        "selector": "data-testid=admin-logout-btn",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Admin analytics → KPIs / candidates tab / companies tab / invoices tab / messages tab / placements tab",
+        "issue": "No API calls fire from the admin SPA because admin.js IIFE aborts immediately. All /api/admin/* endpoints work correctly when called with curl/pytest — the integration is broken only on the client side.",
+        "affected_selectors": ["#kpi-candidates", "#kpi-companies", "#kpi-shortlisted", "#kpi-placements", "#kpi-revenue", "#kpi-revenue-pending", "data-testid=candidates-table", "data-testid=companies-table", "data-testid=invoices-table", "data-testid=messages-table", "data-testid=placements-table"]
+      },
+      {
+        "flow": "Public candidate / company / contact form submission",
+        "issue": "forms.js never attaches submit handlers (same window.VH.api crash). Forms fall back to native HTML submit and do not POST JSON to /api/* — public submissions from the UI do not reach the backend. Backend endpoints themselves are working (verified via pytest).",
+        "affected_selectors": ["data-testid=candidate-form", "data-testid=company-form", "data-testid=contact-form"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix script load order so window.VH.api is defined before page scripts run. Easiest fix: in admin.html, candidate.html, company.html, contact.html, login.html — move the `<script src=\"/static/js/{admin|forms|login}.js\" defer></script>` tag OUT of `{% block content %}` and into a new `{% block scripts %}{{ super() }}<script ...></script>{% endblock %}` (base.html already exposes `{% block scripts %}` after main.js on line 95). Alternatively, load main.js in the <head> without defer, or have each page script lazily access window.VH inside a DOMContentLoaded handler.",
+    "After the fix, re-verify: /admin without token redirects to /login; KPI cards populate from /api/admin/analytics; each tab loads its table; candidate drawer status update + CRM note works; new-invoice modal autofills company on select, creates invoice, PDF download returns a real PDF (backend already returns one); mark-paid updates status; logout clears vh_token and returns to /login; candidate/company/contact public forms submit via fetch (not native POST) and show the success note + reset form."
+  ],
+  "critical_code_review_comments": [
+    "Template script placement bug (described above) — single point cause of multiple seemingly-unrelated UI failures.",
+    "/app/backend/app.py is 793 lines — fine for now but consider splitting routes into blueprints (auth, public, admin, uploads) once it grows past ~1000 lines.",
+    "admin.js (614 lines) and forms.js / login.js look reasonable but admin.js could be split per view (overview, candidates, companies, invoices, placements, messages) for maintainability.",
+    "Public POST /api/candidates and /api/companies have no rate limiting or captcha — fine for MVP but flag for production.",
+    "JWT_SECRET, ADMIN_PASSWORD live in /app/backend/.env — confirmed used via os.environ; no hardcoded creds spotted.",
+    "MongoDB ObjectId concerns are N/A — app uses SQLAlchemy + SQLite."
+  ],
+  "updated_files": [
+    "/app/backend/tests/__init__.py (new, empty)",
+    "/app/backend/tests/backend_test.py (new, 30 pytest tests, all green)"
+  ],
+  "success_rate": {
+    "backend": "100% (30/30 pytest tests passed)",
+    "frontend": "~30% — public pages render, login works, but admin SPA and public form JS are entirely broken by a single script-order bug"
+  },
+  "test_credentials": "Admin: admin@voiddhire.com / Voidd@Admin2026 — works at /api/auth/login and /login UI.",
+  "seed_data_creation": "Test data prefixed with TEST_ was created via API (a few candidates, one company, one placement, one paid invoice, one CRM note, one contact message). Not cleaned up because the suite intentionally exercises persistence; main agent / next iteration can `DELETE FROM ...` on the SQLite DB at /app/backend/voidd_hire.db if needed.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "Backend is solid — re-run /app/backend/tests/backend_test.py with `pytest -v --tb=short` to regress. After main agent fixes the script-block placement in the 5 templates, re-run the frontend playwright flow: /admin without token must redirect to /login; login and land on /admin; KPI numbers populate; click each admin tab and confirm rows render; open invoice modal and create a new invoice for the TEST company; download the PDF; mark it paid; click logout. Also verify the public candidate, company, and contact forms submit via fetch and show the green success note (form.form-note.is-success) and reset themselves.",
+  "rca of the issue": "Root cause: in admin.html / candidate.html / company.html / contact.html / login.html the `<script src=\"/static/js/<page>.js\" defer>` tag is placed INSIDE `{% block content %}` (which Jinja renders inside <main> near the top of <body>), while base.html loads main.js further down the body inside `{% block scripts %}` at line 95. Because both scripts use `defer`, the browser executes them in document order — so admin.js / forms.js run FIRST and immediately evaluate `const api = window.VH.api;` while window.VH is still undefined (main.js hasn't run yet), raising 'Cannot read properties of undefined (reading api)' and aborting the entire IIFE. This single mistake cascades into: no admin token guard, no analytics fetch, all empty tabs, broken drawers/modals, no logout, and broken public form fetch submissions. Reproduction: open /admin in an incognito window — admin shell renders even without login and DevTools console shows the page error. Mitigation: move the page script tag from `{% block content %}` into `{% block scripts %}` in each template (use `{{ super() }}` if needed), or remove `defer` from main.js and load it in <head>, or wrap each page script body in a `DOMContentLoaded` listener that resolves window.VH lazily."
+}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Hire talent — VOIDD Hire{% endblock %}
+{% block content %}
+<section class="form-hero">
+  <div class="container">
+    <span class="eyebrow">For companies</span>
+    <h1 class="h-display">Start a hiring brief.</h1>
+    <p class="lede-muted">Share the role, urgency and budget. We'll come back within one working day with next steps and a clear timeline.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container form-shell">
+    <form id="company-form" class="form-grid" novalidate data-testid="company-form">
+      <div class="field">
+        <label for="company_name">Company name</label>
+        <input id="company_name" name="company_name" type="text" required data-testid="company-name" />
+      </div>
+      <div class="field">
+        <label for="hr_name">Your name</label>
+        <input id="hr_name" name="hr_name" type="text" required data-testid="company-hr-name" />
+      </div>
+      <div class="field">
+        <label for="email">Work email</label>
+        <input id="email" name="email" type="email" required data-testid="company-email" />
+      </div>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" type="tel" required data-testid="company-phone" />
+      </div>
+      <div class="field field-wide">
+        <label for="required_role">Role you're hiring for</label>
+        <input id="required_role" name="required_role" type="text" required placeholder="e.g. Staff Software Engineer" data-testid="company-role" />
+      </div>
+      <div class="field">
+        <label for="experience_required">Experience required</label>
+        <select id="experience_required" name="experience_required" data-testid="company-experience">
+          <option value="">Select</option>
+          <option>0–2 years</option>
+          <option>2–5 years</option>
+          <option>5–8 years</option>
+          <option>8–12 years</option>
+          <option>12+ years</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="budget">Budget (CTC)</label>
+        <input id="budget" name="budget" type="text" placeholder="e.g. ₹30–45L" data-testid="company-budget" />
+      </div>
+      <div class="field">
+        <label for="urgency">Urgency</label>
+        <select id="urgency" name="urgency" data-testid="company-urgency">
+          <option value="">Select</option>
+          <option value="immediate">Immediate (0–2 weeks)</option>
+          <option value="1_month">Within 1 month</option>
+          <option value="3_months">Within 3 months</option>
+          <option value="flexible">Flexible</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="hiring_timeline">Hiring timeline</label>
+        <input id="hiring_timeline" name="hiring_timeline" type="text" placeholder="e.g. Close by Q2" data-testid="company-timeline" />
+      </div>
+      <div class="field field-wide">
+        <label for="skills_required">Skills / stack required</label>
+        <input id="skills_required" name="skills_required" type="text" placeholder="e.g. Go, Kubernetes, distributed systems" data-testid="company-skills" />
+      </div>
+      <div class="field field-wide">
+        <label for="additional_notes">Additional notes</label>
+        <textarea id="additional_notes" name="additional_notes" rows="4" placeholder="Anything else we should know" data-testid="company-notes"></textarea>
+      </div>
+      <div class="field field-wide checkbox-row">
+        <label class="checkbox">
+          <input type="checkbox" id="terms" required data-testid="company-terms" />
+          <span>I agree to VOIDD Hire's <a href="/about#terms">terms</a> and <a href="/about#privacy">privacy policy</a>.</span>
+        </label>
+      </div>
+      <div class="field field-wide form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" data-testid="company-submit-btn">
+          Send hiring brief
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="form-note" data-testid="company-form-note"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/forms.js?v=8" defer></script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — VOIDD Hire{% endblock %}
+{% block content %}
+<section class="login-shell">
+  <div class="login-card" data-testid="login-card">
+    <a href="/" class="login-brand">
+      <img src="/static/images/logo.jpeg" alt="VOIDD Hire" />
+      <span>VOIDD<span class="brand-name-accent">HIRE</span></span>
+    </a>
+    <h1>Admin sign in</h1>
+    <p class="muted">Internal access only.</p>
+    <form id="login-form" data-testid="login-form" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required data-testid="login-email" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required data-testid="login-password" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block" data-testid="login-submit-btn">
+        Sign in
+        <span class="btn-arrow">→</span>
+      </button>
+      <p class="form-note" data-testid="login-note"></p>
+    </form>
+    <a href="/" class="login-back">← Back to site</a>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/login.js?v=8" defer></script>
+{% endblock %}

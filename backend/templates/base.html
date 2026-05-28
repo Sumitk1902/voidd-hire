@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0B1020" />
+  <title>{% block title %}VOIDD Hire — Built for Better Hiring{% endblock %}</title>
+  <meta name="description" content="VOIDD Hire connects modern companies with carefully shortlisted talent. Recruitment operations done right." />
+  <link rel="icon" type="image/jpeg" href="/static/images/logo.jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css?v=8" />
+  {% block head %}{% endblock %}
+</head>
+<body data-page="{{ active }}">
+  <header class="site-header" data-testid="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" data-testid="brand-link" aria-label="VOIDD Hire home">
+        <img src="/static/images/logo.jpeg" alt="VOIDD Hire" class="brand-mark" />
+        <span class="brand-wordmark">
+          <span class="brand-name">VOIDD<span class="brand-name-accent">HIRE</span></span>
+          <span class="brand-tagline">Built for better hiring</span>
+        </span>
+      </a>
+      <nav class="primary-nav" aria-label="Primary">
+        <a href="/" class="nav-link {% if active=='home' %}is-active{% endif %}" data-testid="nav-home">Home</a>
+        <a href="/candidate" class="nav-link {% if active=='candidate' %}is-active{% endif %}" data-testid="nav-candidate">For Talent</a>
+        <a href="/company" class="nav-link {% if active=='company' %}is-active{% endif %}" data-testid="nav-company">For Companies</a>
+        <a href="/about" class="nav-link {% if active=='about' %}is-active{% endif %}" data-testid="nav-about">About</a>
+        <a href="/contact" class="nav-link {% if active=='contact' %}is-active{% endif %}" data-testid="nav-contact">Contact</a>
+      </nav>
+      <div class="header-cta">
+        <a href="/candidate" class="btn btn-ghost" data-testid="header-submit-profile">Submit profile</a>
+        <a href="/company" class="btn btn-primary" data-testid="header-hire-talent">Hire talent</a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" data-testid="mobile-nav-toggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-nav" data-testid="mobile-nav">
+      <a href="/">Home</a>
+      <a href="/candidate">For Talent</a>
+      <a href="/company">For Companies</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+      <a href="/candidate" class="btn btn-ghost">Submit profile</a>
+      <a href="/company" class="btn btn-primary">Hire talent</a>
+    </div>
+  </header>
+
+  <main id="main">{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer" data-testid="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand">
+          <img src="/static/images/logo.jpeg" alt="VOIDD Hire" class="brand-mark" />
+          <span class="brand-wordmark">
+            <span class="brand-name">VOIDD<span class="brand-name-accent">HIRE</span></span>
+            <span class="brand-tagline">Built for better hiring</span>
+          </span>
+        </div>
+        <p class="footer-blurb">Premium recruitment operations for teams that take hiring seriously.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="/candidate">Submit profile</a>
+          <a href="/company">Hire talent</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="/about#terms">Terms &amp; conditions</a>
+          <a href="/about#privacy">Privacy policy</a>
+          <a href="/contact">Support</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="mailto:hello@voiddhire.com">hello@voiddhire.com</a>
+          <a href="tel:+918793667303">+91 87936 67303</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <span id="year"></span> VOIDD Hire. All rights reserved.</span>
+      <span class="footer-meta">Recruitment operations · Pune, India</span>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js?v=8" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

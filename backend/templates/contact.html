@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Contact — VOIDD Hire{% endblock %}
+{% block content %}
+<section class="form-hero">
+  <div class="container">
+    <span class="eyebrow">Contact</span>
+    <h1 class="h-display">Let's talk hiring.</h1>
+    <p class="lede-muted">Tell us a little about what you need. We respond within one working day.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-grid">
+    <form id="contact-form" class="form-grid contact-form" novalidate data-testid="contact-form">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required data-testid="contact-name" />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required data-testid="contact-email" />
+      </div>
+      <div class="field field-wide">
+        <label for="subject">Subject</label>
+        <input id="subject" name="subject" type="text" data-testid="contact-subject" />
+      </div>
+      <div class="field field-wide">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6" required data-testid="contact-message"></textarea>
+      </div>
+      <div class="field field-wide form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" data-testid="contact-submit-btn">
+          Send message
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="form-note" data-testid="contact-form-note"></p>
+      </div>
+    </form>
+
+    <aside class="contact-meta">
+      <h3>Direct lines</h3>
+      <p class="contact-label">Email</p>
+      <a href="mailto:hello@voiddhire.com">hello@voiddhire.com</a>
+      <p class="contact-label">Hiring desk</p>
+      <a href="mailto:hello@voiddhire.com">hello@voiddhire.com</a>
+      <p class="contact-label">Phone</p>
+      <a href="tel:+918793667303">+91 87936 67303</a>
+      <p class="contact-label">Office</p>
+      <span>Nigdi, Pimpri-Chinchwad,<br>Pune 411033, India</span>
+      <p class="contact-label">Hours</p>
+      <span>Mon–Fri, 10:00–19:00 IST</span>
+    </aside>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/forms.js?v=8" defer></script>
+{% endblock %}
